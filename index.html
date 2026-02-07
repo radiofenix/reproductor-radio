@@ -8,13 +8,21 @@
     body {
       font-family: Arial, sans-serif;
       text-align: center;
-      background: #111;
+      background: linear-gradient(270deg, #111, #1a1a1a, #111);
+      background-size: 400% 400%;
+      animation: fondoAnimado 15s ease infinite;
       color: #fff;
       margin: 0;
       height: 100vh;
       display: flex;
       justify-content: center;
       align-items: center;
+    }
+
+    @keyframes fondoAnimado {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
     }
 
     .popup {
@@ -24,12 +32,85 @@
       width: 400px;
       max-width: 90%;
       box-shadow: 0 0 25px rgba(0,0,0,0.7);
+      transition: 0.3s;
     }
 
-    .popup img.logo {
+    .popup.playing {
+      box-shadow: 0 0 30px rgba(255,102,0,0.8);
+    }
+
+    .popup:hover {
+      transform: translateY(-3px);
+    }
+
+    .logo {
       max-width: 200px;
       margin: 10px auto;
       display: block;
+      transition: 0.3s;
+    }
+
+    .playing .logo {
+      animation: glowLogo 2s infinite alternate;
+    }
+
+    @keyframes glowLogo {
+      from { filter: drop-shadow(0 0 5px #ff6600); }
+      to { filter: drop-shadow(0 0 20px #ff6600); }
+    }
+
+    .live {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 10px;
+      font-weight: bold;
+      color: #ff4444;
+    }
+
+    .live-dot {
+      width: 10px;
+      height: 10px;
+      background: red;
+      border-radius: 50%;
+      animation: pulse 1s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.5); opacity: 0.5; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .equalizer {
+      display: flex;
+      justify-content: center;
+      gap: 4px;
+      height: 20px;
+      margin: 10px 0;
+    }
+
+    .bar {
+      width: 4px;
+      background: #ff6600;
+      animation: equalize 1s infinite;
+      animation-play-state: paused;
+    }
+
+    .playing .bar {
+      animation-play-state: running;
+    }
+
+    .bar:nth-child(1) { animation-delay: 0s; }
+    .bar:nth-child(2) { animation-delay: 0.2s; }
+    .bar:nth-child(3) { animation-delay: 0.4s; }
+    .bar:nth-child(4) { animation-delay: 0.6s; }
+    .bar:nth-child(5) { animation-delay: 0.8s; }
+
+    @keyframes equalize {
+      0%, 100% { height: 5px; }
+      50% { height: 20px; }
     }
 
     .controls button {
@@ -41,31 +122,47 @@
       border-radius: 6px;
       background-color: #ff6600;
       color: #fff;
+      transition: 0.3s;
     }
 
     .controls button:hover {
-      background-color: #e65c00;
+      background-color: #ff8533;
+      transform: scale(1.05);
     }
 
     audio {
       width: 100%;
       margin-top: 10px;
     }
+
   </style>
 </head>
 
 <body>
 
-  <div class="popup">
+  <div class="popup" id="playerBox">
+
+    <div class="live">
+      <div class="live-dot"></div>
+      EN VIVO
+    </div>
+
     <img src="https://i.postimg.cc/wjH7VFDW/LOGO-FENIX-NUEVO-06.png"
          alt="Radio Fenix"
          class="logo">
 
     <h2>Radio Fenix</h2>
 
+    <div class="equalizer">
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+      <div class="bar"></div>
+    </div>
+
     <audio id="radioPlayer" controls>
       <source src="https://streaming01.shockmedia.com.ar/9628/;" type="audio/mpeg">
-      Tu navegador no soporta audio HTML5.
     </audio>
 
     <div class="controls">
@@ -76,10 +173,13 @@
       <button onclick="shareStream()">🔗 Compartir</button>
       <button onclick="shareWhatsApp()">📲 WhatsApp</button>
     </div>
+
   </div>
 
   <script>
+
     const radio = document.getElementById('radioPlayer');
+    const box = document.getElementById('playerBox');
 
     function playRadio() {
       radio.play();
@@ -88,6 +188,14 @@
     function pauseRadio() {
       radio.pause();
     }
+
+    radio.onplay = function() {
+      box.classList.add("playing");
+    };
+
+    radio.onpause = function() {
+      box.classList.remove("playing");
+    };
 
     function volUp() {
       if (radio.volume < 1) radio.volume += 0.1;
@@ -107,16 +215,18 @@
         });
       } else {
         navigator.clipboard.writeText(url);
-        alert('Enlace copiado: ' + url);
+        alert('Enlace copiado');
       }
     }
 
     function shareWhatsApp() {
-      const url = "https://streaming01.shockmedia.com.ar/9628/;";
-      const text = encodeURIComponent("🎶 Escucha Radio Fenix en vivo: " + url);
-      window.open("https://wa.me/?text=" + text, "_blank");
+      const telefono = "5492246538639";
+      const url = "https://wa.me/" + telefono;
+      window.open(url, "_blank");
     }
+
   </script>
 
 </body>
 </html>
+
