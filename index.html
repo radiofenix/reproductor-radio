@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Radio Fenix en Vivo</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #111;
+      color: #fff;
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .popup {
+      background: #222;
+      padding: 25px;
+      border-radius: 12px;
+      width: 400px;
+      max-width: 90%;
+      box-shadow: 0 0 25px rgba(0,0,0,0.7);
+    }
+
+    .popup img.logo {
+      max-width: 200px;
+      margin: 10px auto;
+      display: block;
+    }
+
+    .controls button {
+      margin: 5px;
+      padding: 10px 15px;
+      font-size: 14px;
+      cursor: pointer;
+      border: none;
+      border-radius: 6px;
+      background-color: #ff6600;
+      color: #fff;
+    }
+
+    .controls button:hover {
+      background-color: #e65c00;
+    }
+
+    audio {
+      width: 100%;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="popup">
+    <img src="https://i.postimg.cc/wjH7VFDW/LOGO-FENIX-NUEVO-06.png"
+         alt="Radio Fenix"
+         class="logo">
+
+    <h2>Radio Fenix</h2>
+
+    <audio id="radioPlayer" controls>
+      <source src="https://streaming01.shockmedia.com.ar/9628/;" type="audio/mpeg">
+      Tu navegador no soporta audio HTML5.
+    </audio>
+
+    <div class="controls">
+      <button onclick="playRadio()">▶️ Play</button>
+      <button onclick="pauseRadio()">⏸️ Pausa</button>
+      <button onclick="volUp()">🔊 + Volumen</button>
+      <button onclick="volDown()">🔉 - Volumen</button>
+      <button onclick="shareStream()">🔗 Compartir</button>
+      <button onclick="shareWhatsApp()">📲 WhatsApp</button>
+    </div>
+  </div>
+
+  <script>
+    const radio = document.getElementById('radioPlayer');
+
+    function playRadio() {
+      radio.play();
+    }
+
+    function pauseRadio() {
+      radio.pause();
+    }
+
+    function volUp() {
+      if (radio.volume < 1) radio.volume += 0.1;
+    }
+
+    function volDown() {
+      if (radio.volume > 0) radio.volume -= 0.1;
+    }
+
+    function shareStream() {
+      const url = "https://streaming01.shockmedia.com.ar/9628/;";
+      if (navigator.share) {
+        navigator.share({
+          title: 'Escucha Radio Fenix',
+          text: 'Sintoniza ahora Radio Fenix en vivo',
+          url: url
+        });
+      } else {
+        navigator.clipboard.writeText(url);
+        alert('Enlace copiado: ' + url);
+      }
+    }
+
+    function shareWhatsApp() {
+      const url = "https://streaming01.shockmedia.com.ar/9628/;";
+      const text = encodeURIComponent("🎶 Escucha Radio Fenix en vivo: " + url);
+      window.open("https://wa.me/?text=" + text, "_blank");
+    }
+  </script>
+
+</body>
+</html>
